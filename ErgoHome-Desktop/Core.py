@@ -23,11 +23,11 @@ class Info:
     @staticmethod
     def distanciaCabecaMonitor(distancia, monitor):
         if (distancia < monitor.distanciaMinima()):
-            print("O monitor está muito próximo da cabeça")
+            print("O monitor está muito próximo da cabeça.")
         elif (distancia >= monitor.distanciaMinima() and distancia <= monitor.distanciaDeAcuidade()):
-            print("O monitor está em uma distância ideal")
+            print("O monitor está em uma distância ideal.")
         else:
-            print("O monitor está muito longe")
+            print("O monitor está muito longe.")
 
 class Conversor:
     @staticmethod
