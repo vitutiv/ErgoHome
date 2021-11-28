@@ -19,7 +19,6 @@
 '''
 
 #import os
-import Corpo
 import Core
 import sys
 import math
@@ -33,7 +32,7 @@ from matplotlib.image import imread
 #######################################################
 
 #ta pronto
-def getcoordspix(img, titleinstruc=None):
+def getCoordenadasPixel(img, titleinstruc=None):
     if titleinstruc is None:
         titleinstruc = 'MOUSE - botão ESQUERDO: marcar | DIREITO: parar | DO MEIO: desmarcar '
     
@@ -46,21 +45,20 @@ def getcoordspix(img, titleinstruc=None):
     
     return pxy
 
-
 #################################################################
 ############### Function to calc pixel em cm ####################
 #################################################################
-def valpixelcm(sizemonitor, L):
+def tamanhoPixelEmCentimetros(tamanhoMonitor, L):
     '''
     Create DLT2D
-    - sizemonitor tamanho do monitor em cm
+    - tamanhoMonitor tamanho do monitor em cm
          
     - L  matrix containing 2d coordinates of calibration 
          points seen in camera 
          e.g.: np.matrix('1200 1040; 1200 1360')
          valores que vem de onde o cara clica da imagem
 '''
-    F = sizemonitor*2.54
+    F = tamanhoMonitor*2.54
     L = np.matrix(L)
     distempx=math.sqrt(((L[0,0]-L[1,0])**2)+((L[0,1]-L[1,1])**2))
     valorpxcm=F/distempx    
@@ -73,9 +71,9 @@ def valpixelcm(sizemonitor, L):
 def calcdist(valpx, cc2d):
 
     L = np.matrix(cc2d)
-    distinpx = math.sqrt(((L[0,0]-L[1,0])**2)+((L[0,1]-L[1,1])**2))
-    distincm = distinpx*valpx
-    return distincm
+    distanciaEmPixels = math.sqrt(((L[0,0]-L[1,0])**2)+((L[0,1]-L[1,1])**2))
+    distanciaEmCentimetros = distanciaEmPixels*valpx
+    return distanciaEmCentimetros
 
 #######################################################
 ############### MAIN FUNCTION #########################
@@ -83,37 +81,32 @@ def calcdist(valpx, cc2d):
 def main():
     
     # Define global (real)  references
-    rh = int(sys.argv[3])
-    rv = int(sys.argv[4])
-    sizemont = float(sys.argv[2]) # size of monitor screen 
+    resolucaoHorizontal = int(sys.argv[3])
+    resolucaoVertical = int(sys.argv[4])
+    tamanhoMonitor = float(sys.argv[2]) # size of monitor screen 
+    resolucao = Core.Resolucao(resolucaoHorizontal, resolucaoVertical)
+    monitor = Core.Monitor(tamanhoMonitor, resolucao)
+    monitor.sumario()
+
     img = imread(sys.argv[1]) # read image png
     title2calib = 'Marque os pontos: superior-direito; inferior-esquerdo do monitor'
-    pixcal = getcoordspix(img, title2calib)
+    pixcal = getCoordenadasPixel(img, title2calib)
     plt.close()
-    valpxincm = valpixelcm(sizemont, pixcal)#envia tamanho do monitor junto com os pontos pegos na imagem, e retorna o valor de um px em cm
+    tamanhoPixelEmCm = tamanhoPixelEmCentimetros(tamanhoMonitor, pixcal)#envia tamanho do monitor junto com os pontos pegos na imagem, e retorna o valor de um px em cm
     
     titlefree = 'Por favor selecione a posição dos olhos e a parte central do monitor'#selecionar os olhos e a parte central do monitor
-    cc2d = getcoordspix(img, titlefree) 
-    distcabe = calcdist(valpxincm, cc2d)
+    cc2d = getCoordenadasPixel(img, titlefree) 
+    distcabe = calcdist(tamanhoPixelEmCm, cc2d)
     distcab= distcabe*(math.sqrt(2)/2)
     
-    resolucao = Core.Resolucao(rh, rv)
-    monitor = Core.Monitor(sizemont, resolucao)
     
     print("Distância da cabeça: ", distcab)
-    monitor.sumario()
-    if (distcab < monitor.distanciaMinima()):
-        print("O monitor está muito próximo da cabeça")
-    elif (distcab >= monitor.distanciaMinima() and distcab <= monitor.distanciaDeAcuidade()):
-        print("O monitor está em uma distância ideal")
-    else:
-        print("O monitor está muito longe")
-
-    titlefree = 'Please Mark the foot and the knee'#selecionar o topo do joelho e a base dos pés
-    cc2d = getcoordspix(img, titlefree) 
-    distkneefloor=calcdist(valpxincm, cc2d)
+    Core.Info.distanciaCabecaMonitor(distcab, monitor)
+    titlefree = 'Por favor selecione o topo do joelho e a base dos pés'#selecionar o topo do joelho e a base dos pés
+    cc2d = getCoordenadasPixel(img, titlefree) 
+    distkneefloor=calcdist(tamanhoPixelEmCm, cc2d)
     distfloorknee= distkneefloor*(math.sqrt(2)/2)
-    Core.Regua.alturaJoelhoChao(distfloorknee)
+    Core.Info.alturaJoelhoChao(distfloorknee)
     
     return distcab, distfloorknee
 

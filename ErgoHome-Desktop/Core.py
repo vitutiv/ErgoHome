@@ -8,15 +8,26 @@ class Medida(Enum):
     CM = 1,
     POL = 2
 
-class Regua:
+class Info:
+
+    @staticmethod
     def alturaJoelhoChao(distfloorknee):
         dist = (47-distfloorknee)
         if(dist < 0):
-            print("a cadeira esta muito alta abaixe ela em:", -1*dist, "cm")
+            print("A cadeira esta muito alta. Abaixe-a em:", -1 * dist, "cm.")
         elif(dist == 0):
-            print("a cadeira está numa ótima altura")
+            print("A cadeira está na altura ideal.")
         else:
-            print("a cadeira está muito baixa suba ela em:", dist, "cm")
+            print("A cadeira está muito baixa. Suba-a em:", dist, "cm.")
+
+    @staticmethod
+    def distanciaCabecaMonitor(distancia, monitor):
+        if (distancia < monitor.distanciaMinima()):
+            print("O monitor está muito próximo da cabeça")
+        elif (distancia >= monitor.distanciaMinima() and distancia <= monitor.distanciaDeAcuidade()):
+            print("O monitor está em uma distância ideal")
+        else:
+            print("O monitor está muito longe")
 
 class Conversor:
     @staticmethod
