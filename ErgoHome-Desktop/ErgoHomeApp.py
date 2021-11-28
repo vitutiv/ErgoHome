@@ -31,11 +31,12 @@ from matplotlib.image import imread
 #ta pronto
 def getcoordspix(img, titleinstruc=None):
     if titleinstruc is None:
-        titleinstruc = 'Mouse buttom LEFT: mark | RIGHT: stop | MIDDLE: unmark '
+        titleinstruc = 'MOUSE - botão ESQUERDO: marcar | DIREITO: parar | DO MEIO: desmarcar '
     
     plt.imshow(img)
     plt.title(titleinstruc)
-    plt.xlabel('Mouse LEFT: mark | RIGHT: stop | MIDDLE: unmark ')
+    plt.xlabel(
+        'MOUSE - botão ESQUERDO: marcar | DIREITO: parar | DO MEIO: desmarcar ')
     pxy = plt.ginput(n=50, timeout=0, mouse_stop=3, mouse_pop=2)
     pxy = np.matrix(pxy)
     
@@ -82,12 +83,12 @@ def main():
     rv = int(sys.argv[4])
     sizemont = float(sys.argv[2]) # size of monitor screen 
     img = imread(sys.argv[1]) # read image png
-    title2calib = 'Mark the points:right-up; left-down of the monitor screen'
+    title2calib = 'Marque os pontos: superior-direito; inferior-esquerdo do monitor'
     pixcal = getcoordspix(img, title2calib)
     plt.close()
     valpxincm = valpixelcm(sizemont, pixcal)#envia tamanho do monitor junto com os pontos pegos na imagem, e retorna o valor de um px em cm
     
-    titlefree = 'Please Mark the eyes and the center of the monitor screen'#selecionar os olhos e a parte central do monitor
+    titlefree = 'Por favor selecione a posição dos olhos e a parte central do monitor'#selecionar os olhos e a parte central do monitor
     cc2d = getcoordspix(img, titlefree) 
     distcabe = calcdist(valpxincm, cc2d)
     distcab= distcabe*(math.sqrt(2)/2)
@@ -108,7 +109,7 @@ def main():
     cc2d = getcoordspix(img, titlefree) 
     distkneefloor=calcdist(valpxincm, cc2d)
     distfloorknee= distkneefloor*(math.sqrt(2)/2)
-    Corpo.altjoch(distfloorknee)
+    Core.Regua.alturaJoelhoChao(distfloorknee)
     
     return distcab, distfloorknee
 
