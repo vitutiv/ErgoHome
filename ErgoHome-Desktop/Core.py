@@ -1,3 +1,6 @@
+# Alunos: 
+# João Pedro Pilastri Terruel - 11812584
+# Victor Pereira Moura - 11836160
 import math
 from enum import Enum
 
