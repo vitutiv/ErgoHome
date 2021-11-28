@@ -6,19 +6,17 @@
 ''' ErgoHomeApp.PY
     
     Realiza a análise ergonômica do ambiente
-    Inputs: argv[1] = name_image.png
-            argv[2] = number of frames from the kick until the ball enters the goal
-            argv[3] = resolution horizont of screen
-            argv[4] = resolution vertical of screen
+    Inputs: argv[1] = nome_imagem.png
+            argv[2] = tamanho da tela, em polegadas
+            argv[3] = resolução horizontal da tela, em pixels
+            argv[4] = rresolução vertical da tela, em pixels
    
-    Na segunda figura clique na diagonal do monitor:
+    Na segunda figura, clique na diagonal do monitor:
     Referencias monitor ('0 0     ;   0')
                        ('esq-supe       dir-inf')
                                                            horiz  vert
-    Exemplo para rodar:  python ErgoHomeApp.py 1389.png 22 2200 1920
+    Exemplo para rodar:  python ErgoHomeApp.py teste1.png 22 1920 1080
 '''
-
-#import os
 import Core
 import sys
 import math
@@ -79,7 +77,27 @@ def calcdist(valpx, cc2d):
 ############### MAIN FUNCTION #########################
 #######################################################
 def main():
+    if sys.argv[1] == "-h":
+        print(''' 
+ErgoHomeApp.PY
+    Realiza a análise ergonômica do ambiente
+    Inputs: argv[1] = nome_imagem.png
+        argv[2] = tamanho da tela, em polegadas
+        argv[3] = resolução horizontal da tela, em pixels
+        argv[4] = rresolução vertical da tela, em pixels
+    Na segunda figura, clique na diagonal do monitor:
+    Referencias monitor ('0 0     ;   0')
+                        ('esq-supe       dir-inf')
+                                                             horiz vert
+    Exemplo para rodar:  python ErgoHomeApp.py teste1.png 22 1920 1080
+        ''')
+        return
     
+    if len(sys.argv) != 5:
+        print('Argumentos inválidos! ')
+        print("Como usar: python ErgoHomeApp.py imagem tamanho_monitor resolucao_horizontal resolucao_vertical")
+        return
+
     # Define global (real)  references
     resolucaoHorizontal = int(sys.argv[3])
     resolucaoVertical = int(sys.argv[4])
@@ -92,9 +110,9 @@ def main():
     title2calib = 'Marque os pontos: superior-direito; inferior-esquerdo do monitor'
     pixcal = getCoordenadasPixel(img, title2calib)
     plt.close()
-    tamanhoPixelEmCm = tamanhoPixelEmCentimetros(tamanhoMonitor, pixcal)#envia tamanho do monitor junto com os pontos pegos na imagem, e retorna o valor de um px em cm
+    tamanhoPixelEmCm = tamanhoPixelEmCentimetros(tamanhoMonitor, pixcal) # envia tamanho do monitor junto com os pontos pegos na imagem, e retorna o valor de um px em cm
     
-    titlefree = 'Por favor selecione a posição dos olhos e a parte central do monitor'#selecionar os olhos e a parte central do monitor
+    titlefree = 'Por favor selecione a posição dos olhos e a parte central do monitor' # selecionar os olhos e a parte central do monitor
     cc2d = getCoordenadasPixel(img, titlefree) 
     distcabe = calcdist(tamanhoPixelEmCm, cc2d)
     distcab= distcabe*(math.sqrt(2)/2)
